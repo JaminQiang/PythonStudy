@@ -1,0 +1,2 @@
+JaminGit is the folder of Jamin to study python, it includes the code of a whole website.
+
