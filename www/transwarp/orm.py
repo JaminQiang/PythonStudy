@@ -21,7 +21,7 @@ class Field(object):
 
 	def __init__(self, **kw):
 		self.name = kw.get('name', None)
-		self.default = kw.get('default', None)
+		self._default = kw.get('default', None)
 		self.primary_key = kw.get('primary_key', False)
 		self.nullable = kw.get('nullable', True)
 		self.updatable = kw.get('updatable', True)
