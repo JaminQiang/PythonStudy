@@ -23,6 +23,7 @@ except ImportError:
 # thread local object for storing request and response:
 
 ctx = threading.local()
+# 创建全局ThreadLocal对象， 用一个全局dict存放所有线程的变量，用thread作为key查询每个线程的变量
 
 # Dict object:
 
@@ -49,6 +50,7 @@ _TIMEDELTA_ZERO = datetime.timedelta(0)
 # timezone as UTC+8:00, UTC-10:00
 
 _RE_TZ = re.compile('^([\+\-])([0-9]{1,2})\:([0-9]{1,2})$')
+# RE module for 正则表达式，
 
 class UTC(datetime.tzinfo):
 	"""
@@ -164,7 +166,7 @@ _RESPONSE_STATUSES = {
 	510: 'Not Extended',
 }
 
-_RE_RESPONSE_STATUE = re.complied(r'^\d\d\d(\ [\w\ ]+)?$')
+_RE_RESPONSE_STATUE = re.compile(r'^\d\d\d(\ [\w\ ]+)?$')
 
 _RESPONSE_HEADERS = (
 	'Accept-Ranges',
@@ -810,7 +812,7 @@ class Request(object):
 				for c in cookie_str.split(';'):
 					pos = c.find('=')
 					if pos>0:
-						cookies[c[:pos].strip()] = _unquote(c[pos+1]:)
+						cookies[c[:pos].strip()] = _unquote(c[pos+1:])
 			self._cookies = cookies
 		return self._cookies
 
@@ -835,7 +837,7 @@ class Request(object):
 
 UTC_0 = UTC('+00:00')
 
-class Response(onject):
+class Response(object):
 
 	def __init__(self):
 		self._status = '200 OK'
@@ -1036,7 +1038,7 @@ class Jinja2TemplateEngine(TemplateEngine):
 		from jinja2 import Environment, FileSystemLoader
 		if not 'autoescape' in kw:
 			kw['autoescape'] = True
-		self._env = Environment(loader=FileSystemLoader(temol_dir), **kw)
+		self._env = Environment(loader=FileSystemLoader(templ_dir), **kw)
 
 	def add_filter(self, name, fn_filter):
 		self._env.filters[name] = fn_filter
@@ -1063,7 +1065,7 @@ def view(path):
 
 	"""
 	def _decorator(func):
-		@functools.warps(func)
+		@functools.wraps(func)
 		def _wrapper(*args, **kw):
 			r = func(*args, **kw)
 			if isinstance(r, dict):
@@ -1106,7 +1108,7 @@ def _build_interceptor_fn(func, next):
 			return next()
 	return _wrapper
 
-def _build_interceptor_chain(last_fn, *interceptor):
+def _build_interceptor_chain(last_fn, *interceptors):
 	"""
 	Build interceptor chain.
 
@@ -1133,12 +1135,12 @@ def _load_module(module_name):
 
 class WSGIApplication(object):
 		
-		def __init__(self, document_root=None, **kw):
+	def __init__(self, document_root=None, **kw):
 		"""
 		Init a WSGIApplication.
 
 		Args:
-			document_root: document root path.
+		document_root: document root path.
 		"""
 		self._running = False
 		self._document_root = document_root
@@ -1209,7 +1211,7 @@ class WSGIApplication(object):
 		_application = Dict(document_root=self._document_root)
 
 		def fn_route():
-			request_method = xtc.request.request_method
+			request_method = ctx.request.request_method
 			path_info = ctx.request.path_info
 			if request_method=='GET':
 				fn = self._get_static.get(path_info, None)
