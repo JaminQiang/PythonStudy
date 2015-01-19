@@ -12,6 +12,9 @@ import time, uuid
 from transwarp.db import next_id
 from transwarp.orm import Model, StringField, BooleanField, FloatField, TextField
 
+def next_id():
+	return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
+
 class User(Model):
 	__table__ = 'users'
 
@@ -33,7 +36,7 @@ class Blog(Model):
 	name = StringField(ddl='varchar(50)')
 	summary = StringField(ddl='varchar(200)')
 	content = TextField()
-	created_at = FloatField(updatable=False, default=time.time)
+	create_at = FloatField(updatable=False, default=time.time)
 
 class Comment(Model):
 	__table__ = 'comments'
@@ -43,4 +46,4 @@ class Comment(Model):
 	user_id = StringField(updatable=False, ddl='varchar(50)')
 	user_name = StringField(ddl='varchar(50)')
 	content = TextField()
-	created_at = FloatField(updatable=False, default=time.time)
+	create_at = FloatField(updatable=False, default=time.time)
