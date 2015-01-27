@@ -148,10 +148,11 @@ class _DbCtx(threading.local):
 
 # thread-local db context:
 _db_ctx = _DbCtx()
+# threadlocal对象，持有的数据库连接对每个线程看到的是不一样的，任何一个线程都无法访问其他线程的数据
 
 # global engine object:
 engine = None
-# 全部变量engine，每个需要调用的函数都会声明global engine
+# 全局变量engine，每个需要调用的函数都会声明global engine
 # 如果engine为空，通过create_engine函数，创建_Engine类的实例engine，并将参数params赋值至engine
 #
 
@@ -166,7 +167,7 @@ class _Engine(object):
 		return self._connect()
 
 def create_engine(user, password, database, host='127.0.0.1', port=3306, **kw):
-	# 初始化数据库连接信息，执行后即可执行数据库操作。
+	# 初始化数据库连接信息，初始化之后即可执行数据库操作。
 	import mysql.connector
 	# 导入SQL驱动
 	global engine
@@ -189,6 +190,7 @@ def create_engine(user, password, database, host='127.0.0.1', port=3306, **kw):
 	logging.info('Init mysql engine <%s> ok.' % hex(id(engine)))
 
 class _ConnectionCtx(object):
+	# 自动获取和释放连接
 	"""
 	_ConnectionCtx object that can open and close connection context. _ConnectionCtx object can be nested and only the most outer connection has effect.
 	
@@ -220,6 +222,7 @@ def connection():
 	return _ConnectionCtx()
 
 def with_connection(func):
+	# 装饰器，使__enter__()和__exit__()的对象可以用于with
 	"""
 	Decorator for reuse connection.
 

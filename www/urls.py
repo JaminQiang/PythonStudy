@@ -93,13 +93,14 @@ def index():
 
 @view('blog.html')
 @get('/blog/:blog_id')
+# 装饰器get是web.py中定义的，函数中的get是orm.py中的类Model中定义的
 def blog(blog_id):
-	blog = Blog.get(blog_id)
-	if blog is None:
-		raise notfound()
-	blog.html_content = markdown2.markdown(blog.content)
-	comments = Comment.find_by('where blog_id=? order by create_at desc limit 1000', blog_id)
-	return dict(blog=blog, comments=comments, user=ctx.request.user)
+    blog = Blog.get(blog_id)
+    if blog is None:
+        raise notfound()
+    blog.html_content = markdown2.markdown(blog.content)
+    comments = Comment.find_by('where blog_id=? order by created_at desc limit 1000', blog_id)
+    return dict(blog=blog, comments=comments, user=ctx.request.user)
 
 @view('signin.html')
 @get('/signin')
@@ -114,6 +115,7 @@ def signout():
 @api
 @post('/api/authenticate')
 def authenticate():
+	# 20150122 测试signin界面登陆时 返回账号不存在
 	i = ctx.request.input(remember='')
 	email = i.email.strip().lower()
 	password = i.password
@@ -138,7 +140,7 @@ _RE_MD5 = re.compile(r'^[0-9a-f]{32}$')
 def register_user():
 	i = ctx.request.input(name='', email='', password='')
 	name = i.name.strip()
-	email = i.name.strip().lower()
+	email = i.email.strip().lower()
 	password = i.password
 	if not name:
 		raise APIValueError('name')
@@ -206,7 +208,7 @@ def api_get_blogs():
 	blogs, page = _get_blogs_by_page()
 	if format=='html':
 		for blog in blogs:
-			blog.content = markdown2.maekdown(blog.content)
+			blog.content = markdown2.markdown(blog.content)
 	return dict(blogs=blogs, page=page)
 
 @api
@@ -235,6 +237,7 @@ def api_create_blog():
 	blog = Blog(user_id=user.id, user_name=user.name, name=name, summary=summary, content=content)
 	blog.insert()
 	return blog
+	
 @api
 @post('/api/blogs/:blog_id')
 def api_update_blog(blog_id):

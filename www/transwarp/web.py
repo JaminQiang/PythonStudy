@@ -46,11 +46,12 @@ class Dict(dict):
 		self[key] = value
 
 _TIMEDELTA_ZERO = datetime.timedelta(0)
+# timedelta是datetime模块中的一个类，具有一系列method，用于计算时间差
 
 # timezone as UTC+8:00, UTC-10:00
 
 _RE_TZ = re.compile('^([\+\-])([0-9]{1,2})\:([0-9]{1,2})$')
-# RE module for 正则表达式，
+# RE module for 正则表达式，＋/－号开始，1-2位数字，冒号，1-2位数字结束
 
 class UTC(datetime.tzinfo):
 	"""
@@ -228,6 +229,7 @@ class HttpError(Exception):
 		"""
 		super(HttpError, self).__init__()
 		self.status = '%d %s' % (code, _RESPONSE_STATUSES[code])
+		# 输入code，.status方法返回错误代码＋错误描述
 
 	def header(self, name, value):
 		if not hasattr(self, '_headers'):
@@ -236,7 +238,7 @@ class HttpError(Exception):
 
 	@property
 	def headers(self):
-		if hasattr(Self, '_headers'):
+		if hasattr(self, '_headers'):
 			return self._headers
 		return []
 
@@ -1160,6 +1162,7 @@ class WSGIApplication(object):
 
 	@property
 	def template_engine(self):
+		# 怎么有两个template_engine函数，根据参数不同进行区分？
 		return self._template_engine
 
 	@template_engine.setter
