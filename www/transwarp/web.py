@@ -443,9 +443,10 @@ def get(path):
 		func.__web_method__ = 'GET'
 		return func
 	return _decorator
-	# how to understand decorator, and how to use decorator?
+	# 定义GET，将路径设置为装饰器的参数，将方法设置为GET
 
 def post(path):
+	# 定义POST，将路径设置为装饰器的参数，将方法设置为POST
 	"""
 	A @post decorator.
 
@@ -1073,6 +1074,7 @@ def view(path):
 			if isinstance(r, dict):
 				logging.info('return Template')
 				return Template(path, **r)
+				# 当一个函数出现return的时候，函数到此就结束了。
 			raise ValueError('Expect return a dict when using @view() decorator.')
 		return _wrapper
 	return _decorator
@@ -1081,9 +1083,11 @@ _RE_INTERCEPTROR_STARTS_WITH = re.compile(r'^([^\*\?]+)\*?$')
 _RE_INTERCEPTROR_ENDS_WITH = re.compile(r'^\*([^\*\?]+)$')
 
 def _build_pattern_fn(pattern):
+	# 这个函数不懂
 	m = _RE_INTERCEPTROR_STARTS_WITH.match(pattern)
 	if m:
 		return lambda p: p.startswith(m.group(1))
+		# 返回的是一个函数？
 	m = _RE_INTERCEPTROR_ENDS_WITH.match(pattern)
 	if m:
 		return lambda p: p.endswith(m.group(1))
@@ -1163,6 +1167,8 @@ class WSGIApplication(object):
 	@property
 	def template_engine(self):
 		# 怎么有两个template_engine函数，根据参数不同进行区分？
+		# @property装饰器
+		# 自动创建另一个装饰器@func.setter用于属性设置
 		return self._template_engine
 
 	@template_engine.setter
@@ -1180,11 +1186,39 @@ class WSGIApplication(object):
 				self.add_url(fn)
 
 	def add_url(self, func):
+		"""
+		class Route(object):
+			def __init__(self, func):
+				self.path = func.__web_route__
+				self.method = func.__web_method__
+				self.is_static = _re_route.search(self.path) is None
+				if not self.is_static:
+					self.route = re.compile(_build_regex(self.path))
+				self.func = func
+
+			def match(self, url):
+				m = self.route.match(url)
+				if m:
+					return m.groups()
+				return None
+
+			def __call__(self, *args):
+				return self.func(*args)
+
+			def __str__(self):
+				if self.is_static:
+					return 'Route(static,%s,path=%s)' % (self.method, self.path)
+				return 'Route(dynamic,%s,path=%s)' % (self.method, self.path)
+
+			__repr__ = __str__
+		"""
 		self._check_not_running()
 		route = Route(func)
 		if route.is_static:
 			if route.method=='GET':
+				# route.method=func.__web_method__
 				self._get_static[route.path] = route
+				# route.path=func.__web_route__
 			if route.method=='POST':
 				self._post_static[route.path] = route
 		else:
@@ -1214,6 +1248,7 @@ class WSGIApplication(object):
 		_application = Dict(document_root=self._document_root)
 
 		def fn_route():
+			# 这就是web响应的函数？？？
 			request_method = ctx.request.request_method
 			path_info = ctx.request.path_info
 			if request_method=='GET':
@@ -1282,6 +1317,7 @@ class WSGIApplication(object):
 		return wsgi
 
 if __name__=='__main__':
+	# 当模块被作为主函数时，运行下列代码；当模块被其他模块调用时，不运行下列代码。
 	sys.path.append('.')
 	import doctest
 	doctest.testmod()

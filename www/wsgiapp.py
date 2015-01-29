@@ -70,6 +70,7 @@ wsgi.add_interceptor(urls.user_interceptor)
 		logging.info('Add interceptor: %s' % str(func))
 """
 # __interceptors是一个空列表，在空列表中加入urls.user_interceptor
+# 在空列表里插入了，然后呢？不懂。
 """
 @interceptor('/')
 def user_interceptor(next):
@@ -93,6 +94,23 @@ def user_interceptor(next):
 """
 wsgi.add_interceptor(urls.manage_interceptor)
 """
+	""
+	def interceptor(pattern='/'):
+		def _decorator(func):
+			func.__interceptor__ = _build_pattern_fn(pattern)
+			return func
+		return _decorator
+	""
+	""
+	def _build_pattern_fn(pattern):
+		m = _RE_INTERCEPTROR_STARTS_WITH.match(pattern)
+		if m:
+			return lambda p: p.startswith(m.group(1))
+		m = _RE_INTERCEPTROR_ENDS_WITH.match(pattern)
+		if m:
+			return lambda p: p.endswith(m.group(1))
+		raise ValueError('Invalid pattern definition in interceptor.')
+	""
 @interceptor('/manage/')
 def manage_interceptor(next):
 	user = ctx.request.user
@@ -100,6 +118,8 @@ def manage_interceptor(next):
 		return next()
 	raise seeother('/signin')
 """
+# 这里的装饰器里的__interceptor__和_build_pattern_fn不是很懂。
+# _build_pattern_fn中的返回了lambda，是返回了一个函数？
 wsgi.add_module(urls)
 """
 	def add_module(self, mod):
@@ -111,6 +131,8 @@ wsgi.add_module(urls)
 			if callable(fn) and hasattr(fn, '__web_route__') and hasattr(fn, '__web_method__'):
 				self.add_url(fn)
 """
+# 检查输入参数是否是模块，对于模块内的所有函数，检查其是否包含__web_route__属性与__web_method__属性，如果包含，执行add_url函数
+# 
 
 # 在9000端口上启动本地测试服务器：
 if __name__ == '__main__':

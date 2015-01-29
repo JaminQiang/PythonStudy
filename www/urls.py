@@ -59,6 +59,13 @@ def check_admin():
 
 @interceptor('/')
 def user_interceptor(next):
+	"""
+	def interceptor(pattern='/'):
+		def _decorator(func):
+			func.__interceptor__ = _build_pattern_fn(pattern)
+			return func
+		return _decorator
+	"""
 	logging.info('try to bind user from session cookie...')
 	user = None
 	cookie = ctx.request.cookies.get(_COOKIE_NAME)
@@ -99,8 +106,15 @@ def blog(blog_id):
     if blog is None:
         raise notfound()
     blog.html_content = markdown2.markdown(blog.content)
-    comments = Comment.find_by('where blog_id=? order by created_at desc limit 1000', blog_id)
+    comments = Comment.find_by('where blog_id=? order by create_at desc limit 1000', blog_id)
     return dict(blog=blog, comments=comments, user=ctx.request.user)
+    """
+	@classmethod
+	# classmethod装饰器可以使该方法不用实例化，直接调用。
+	def get(cls, pk):
+		d = db.select_one('select * from %s where %s=?' % (cls.__table__, cls.__primary_key__.name), pk)
+		return cls(**d) if d else None
+	"""
 
 @view('signin.html')
 @get('/signin')

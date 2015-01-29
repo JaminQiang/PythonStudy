@@ -206,6 +206,7 @@ class Model(dict):
 		self[key] = value
 
 	@classmethod
+	# classmethod装饰器可以使该方法不用实例化，直接调用。
 	def get(cls, pk):
 		"""
 		Get by primary key.
