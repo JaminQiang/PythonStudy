@@ -119,9 +119,12 @@ class VersionField(Field):
 _triggers = frozenset(['pre_insert', 'pre_update', 'pre_delete'])
 
 def _gen_sql(table_name, mappings):
+	# 生成数据库表结构？
 	pk = None
 	sql = ['-- generating SQL for %s:' % table_name, 'create table `%s` (' % table_name]
 	for f in sorted(mappings.values(), lambda x,y: cmp(x._order, y._order)):
+		# sorted中的是一个匿名函数lambda？？意义何在？？这是sorted函数的参数cmp，用于调整排序逻辑。
+		# 在对mappings.values()进行排序时，按照每个值的._order的顺序排序。
 		if not hasattr(f, 'ddl'):
 			raise StandardError('no ddl in field "%s".' % n)
 		ddl = f.ddl
@@ -192,6 +195,7 @@ class Model(dict):
 
 	"""
 	__metaclass__ = ModelMetaclass
+	# 定义这个类的属性的目的是？用于读取具体的映射关系？
 
 	def __init__(self, **kw):
 		super(Model, self).__init__(**kw)
@@ -207,6 +211,7 @@ class Model(dict):
 
 	@classmethod
 	# classmethod装饰器可以使该方法不用实例化，直接调用。
+	# 可以直接通过类方法实现主键查找，不需要实例化
 	def get(cls, pk):
 		"""
 		Get by primary key.
@@ -277,6 +282,7 @@ class Model(dict):
 		db.update('delete from `%s` where `%s`=?' % (self.__table__, pk), *args)
 
 	def insert(self):
+		# 实例方法，实例化后调用方法进行处理。
 		self.pre_insert and self.pre_insert()
 		params = {}
 		for k, v in self.__mappings__.iteritems():

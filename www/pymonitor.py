@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'Jamin Qiang'
+# 监视器，通过watchdog监控文件夹内的.py文件是否存在修改，如果存在修改，自动重启服务器。	
 
 import os, sys, time, subprocess
 

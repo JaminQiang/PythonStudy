@@ -25,6 +25,7 @@ class User(Model):
 	name = StringField(ddl='varchar(50)')
 	image = StringField(ddl='varchar(500)')
 	create_at = FloatField(updatable=False, default=time.time)
+	# 这里的__table__，id等属性都是类的属性，不是实例的属性。从类级别上定义的属性用来描述对象和表的映射关系，而实例属性必须用__init__进行初始化。
 
 class Blog(Model):
 	__table__ = 'blogs'

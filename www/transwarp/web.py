@@ -8,7 +8,7 @@ support the development of dynamic websites, web applications, web services
 and web resources. The framework aims to alleviate the overhead associated
 with common activities performed in web development. For example, many 
 frameworks provide libraries for database access, templating frameworks and 
-session management, and thet iften promote code reuse.
+session management, and thet often promote code reuse.
 """
 
 __author__ = 'Jamin Qiang'

@@ -3,6 +3,9 @@
 
 __author__ = 'Jamin Qiang'
 
+# Application Programming Interface 应用程序编程接口
+# 编写一个decorator用于将数据封装为json格式
+
 """
 JSON API definition.
 """

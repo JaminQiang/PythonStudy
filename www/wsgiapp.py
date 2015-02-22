@@ -29,7 +29,7 @@ db.create_engine(**configs.db)
 # 创建一个WSGIApplication:
 wsgi = WSGIApplication(os.path.dirname(os.path.abspath(__file__)))
 # 服务器网关接口Python Web Service Gateway Interface
-# WSGI分为两部分，一个是服务器/网关，一个是应用程序/应用框架。在处理一个WSGI请求时，服务器会为应用程序提供环境资讯及一个会呼函数（callback function）。当应用程序完成处理请求后，通过回呼函数，将结果回传给服务器。
+# WSGI分为两部分，一个是服务器/网关，一个是应用程序/应用框架。在处理一个WSGI请求时，服务器会为应用程序提供环境资讯及一个回呼函数（callback function）。当应用程序完成处理请求后，通过回呼函数，将结果回传给服务器。
 # 此处的wsgi调用了web.py的类WSGIApplication，__file__是当前文件的位置，直接在IDS输入会报错__file__ not defined。
 # 此处的os.path.dirname(os.path.abspath(__file__))输出的是当前文件所处的文件夹
 # 执行该代码后，生成了一个类WSGIApplication的实例wsgi
@@ -136,4 +136,4 @@ wsgi.add_module(urls)
 
 # 在9000端口上启动本地测试服务器：
 if __name__ == '__main__':
-	wsgi.run(9000, host='0.0.0.0')
+	wsgi.run(9001, host='0.0.0.0')
